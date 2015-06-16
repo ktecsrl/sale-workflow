@@ -17,13 +17,15 @@ class SaleOrder(models.Model):
                 raise exceptions.Warning(
                     _("You can't back any order that it's not on cancel "
                       "state. Order: %s" % order.name))
+            for invoice in order.invoice_ids:
+                invoice.signal_workflow('invoice_cancel')
+                invoice.internal_number = False
+                invoice.unlink()
             order.order_line.write({'state': 'draft'})
             order.procurement_group_id.unlink()
             for line in order.order_line:
                 line.procurement_ids.unlink()
             order.write({'state': 'draft'})
-            for invoice in order.invoice_ids:
-                invoice.unlink()
             order.delete_workflow()
             order.create_workflow()
         return True
