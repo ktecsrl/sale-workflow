@@ -22,6 +22,8 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 line.procurement_ids.unlink()
             order.write({'state': 'draft'})
+            for invoice in order.invoice_ids:
+                invoice.unlink()
             order.delete_workflow()
             order.create_workflow()
         return True
