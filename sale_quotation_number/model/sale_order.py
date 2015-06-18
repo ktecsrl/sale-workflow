@@ -43,10 +43,11 @@ class SaleOrder(models.Model):
     def action_wait(self):
         if super(SaleOrder, self).action_wait():
             for sale in self:
-                quo = sale.name
-                sale.write({
-                    'origin': quo,
-                    'name': self.env['ir.sequence'].next_by_code(
-                        'sale.order')
-                })
+                if not sale.keep_number:
+                    quo = sale.name
+                    sale.write({
+                        'origin': quo,
+                        'name': self.env['ir.sequence'].next_by_code(
+                            'sale.order')
+                    })
         return True

@@ -3,11 +3,13 @@
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
 
-from openerp import models, api, exceptions, _
+from openerp import models, api, exceptions, fields, _
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
+
+    keep_number = fields.Boolean()
 
     @api.multi
     def button_draft(self):
@@ -28,4 +30,5 @@ class SaleOrder(models.Model):
             order.write({'state': 'draft'})
             order.delete_workflow()
             order.create_workflow()
+            order.keep_number = True
         return True
